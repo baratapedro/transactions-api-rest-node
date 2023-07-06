@@ -14,10 +14,10 @@ export async function transactionsRoutes(app: FastifyInstance) {
     const transactionSchema = z.object({
       text: z.string(),
       amount: z.number(),
-      type: z.enum(['credit', 'debit']),
+      // type: z.enum(['credit', 'debit']),
     })
 
-    const { text, amount, type } = transactionSchema.parse(request.body)
+    const { text, amount } = transactionSchema.parse(request.body)
 
     let sessionId = request.cookies.sessionId
 
@@ -33,7 +33,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
     await knex('transactions').insert({
       id: randomUUID(),
       text,
-      amount: type === 'credit' ? amount : amount * -1,
+      amount,
       session_id: sessionId,
     })
 
@@ -51,6 +51,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
       const transactions = await knex('transactions')
         .select()
         .where('session_id', sessionId)
+        .orderBy('created_at', 'desc')
 
       return {
         transactions,
@@ -94,8 +95,22 @@ export async function transactionsRoutes(app: FastifyInstance) {
       const { sessionId } = request.cookies
 
       const summary = await knex('transactions')
-        .where('session_id', sessionId)
-        .sum('amount', { as: 'amount' })
+        .select(
+          knex('transactions')
+            .where('amount', '>', 0)
+            .andWhere('session_id', sessionId)
+            .sum('amount')
+            .as('credit'),
+          knex('transactions')
+            .where('amount', '<', 0)
+            .andWhere('session_id', sessionId)
+            .sum('amount')
+            .as('debit'),
+          knex('transactions')
+            .sum('amount')
+            .as('amount')
+            .where('session_id', sessionId),
+        )
         .first()
 
       return {
@@ -103,4 +118,29 @@ export async function transactionsRoutes(app: FastifyInstance) {
       }
     },
   )
+
+  app.delete('/:id', async (request, reply) => {
+    const transactionParamsSchema = z.object({
+      id: z.string(),
+    })
+
+    const { id } = transactionParamsSchema.parse(request.params)
+
+    let sessionId = request.cookies.sessionId
+
+    if (!sessionId) {
+      sessionId = randomUUID()
+
+      reply.cookie('sessionId', sessionId, {
+        path: '/',
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      })
+    }
+
+    await knex('transactions').delete().where({
+      id,
+    })
+
+    return reply.status(204).send()
+  })
 }
