@@ -37,7 +37,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
       session_id: sessionId,
     })
 
-    return reply.status(201).send()
+    return reply.status(201).send(sessionId)
   })
 
   app.get(
