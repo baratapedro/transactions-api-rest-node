@@ -30,6 +30,8 @@ export async function transactionsRoutes(app: FastifyInstance) {
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         httpOnly: false,
       })
+
+      reply.header('Access-Control-Allow-Credentials', true)
     }
 
     await knex('transactions').insert({
