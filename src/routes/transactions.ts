@@ -25,7 +25,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
       sessionId = randomUUID()
 
       reply.cookie('sessionId', sessionId, {
-        domain: 'https://transactions-omega.vercel.app',
+        domain: 'transactions-omega.vercel.app',
         path: '/',
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         httpOnly: false,
