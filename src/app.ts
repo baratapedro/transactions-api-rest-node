@@ -8,6 +8,7 @@ export const app = fastify()
 app.register(cors, {
   origin: ['https://transactions-omega.vercel.app/'],
   credentials: true,
+  methods: ['GET', 'PUT', 'POST', 'DELETE'],
 })
 
 app.register(cookie)
