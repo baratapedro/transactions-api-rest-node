@@ -6,7 +6,7 @@ import cors from '@fastify/cors'
 export const app = fastify()
 
 app.register(cors, {
-  origin: true,
+  origin: 'https://transactions-omega.vercel.app/',
   credentials: true,
 })
 
