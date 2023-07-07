@@ -32,6 +32,10 @@ export async function transactionsRoutes(app: FastifyInstance) {
       })
 
       reply.header('Access-Control-Allow-Credentials', true)
+      reply.header(
+        'Access-Control-Allow-Origin',
+        'https://transactions-omega.vercel.app/',
+      )
     }
 
     await knex('transactions').insert({
