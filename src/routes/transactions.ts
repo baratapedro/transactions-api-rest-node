@@ -29,6 +29,8 @@ export async function transactionsRoutes(app: FastifyInstance) {
         path: '/',
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
         httpOnly: false,
+        sameSite: 'none',
+        secure: true,
       })
 
       reply.header('Access-Control-Allow-Credentials', true)
