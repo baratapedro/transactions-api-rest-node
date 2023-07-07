@@ -28,6 +28,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
         domain: 'https://transactions-omega.vercel.app',
         path: '/',
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        httpOnly: false,
       })
     }
 
