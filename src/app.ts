@@ -9,6 +9,7 @@ app.register(cors, {
   origin: ['https://transactions-omega.vercel.app'],
   credentials: true,
   methods: ['GET', 'PUT', 'POST', 'DELETE'],
+  exposedHeaders: ['set-cookie'],
 })
 
 app.register(cookie)
